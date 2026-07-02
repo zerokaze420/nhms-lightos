@@ -55,8 +55,8 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 - `NODE_HOST`：必填，客户端连接用的域名或公网 IP。
 - `NODE_PORT`：监听端口，默认 `443`。
 - `NODE_NAME`：连接 URL 里的显示名称，默认 `airport-node`。
-- `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `80`，订阅地址默认使用
-  `http://NODE_HOST/SUBSCRIPTION_PATH`，不额外显示端口。
+- `SUBSCRIPTION_HOST`：订阅使用的域名，默认 `sub.NODE_HOST`。
+- `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `80`，默认订阅地址不额外显示端口。
 - `SUBSCRIPTION_PATH`：订阅路径，默认 `airport-node.txt`。
 - `REALITY_SERVER_NAME`：Reality 握手目标，默认 `www.microsoft.com`。
 - `REALITY_FINGERPRINT`：客户端指纹，默认 `chrome`。
@@ -85,6 +85,8 @@ nix run .#airport-node-init
 ufw allow 443/tcp
 ufw allow 80/tcp
 ```
+
+订阅默认使用 `sub.NODE_HOST`，需要在 DNS 里把这个子域名解析到同一台 VPS。
 
 ## 注意事项
 
