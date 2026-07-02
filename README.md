@@ -14,21 +14,23 @@ git。
 
 ## VPS 使用方式
 
-下面的命令在 VPS 上执行，不要在本机执行：
+下面的命令在 VPS 上执行，不要在本机执行。先把仓库 clone 到 VPS 本地，再进入
+仓库目录运行：
 
 ```bash
 sudo -i
-nix profile install github:OWNER/REPO#airport-node-runtime
-NODE_HOST=node.example.com nix run github:OWNER/REPO#airport-node-init
+git clone https://github.com/zerokaze420/nhms-lightos.git
+cd nhms-lightos
+nix profile install .#airport-node-runtime
+NODE_HOST=node.example.com nix run .#airport-node-init
 ```
 
-把 `github:OWNER/REPO` 换成真实的 flake 地址，把 `node.example.com` 换成 VPS
-的域名或公网 IP。
+把 `node.example.com` 换成 VPS 的域名或公网 IP。
 
 之后如果只是想重新输出 URL 和二维码：
 
 ```bash
-sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run github:OWNER/REPO#airport-node-info
+sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 ```
 
 ## 配置项
@@ -54,7 +56,7 @@ NODE_HOST=node.example.com \
 NODE_PORT=443 \
 NODE_NAME=my-vps \
 REALITY_SERVER_NAME=www.microsoft.com \
-nix run github:OWNER/REPO#airport-node-init
+nix run .#airport-node-init
 ```
 
 ## 防火墙
