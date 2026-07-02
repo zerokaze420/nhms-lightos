@@ -15,15 +15,15 @@ git。
 
 ## VPS 使用方式
 
-下面的命令在 VPS 上执行，不要在本机执行。把 `node.example.com` 换成节点域名，
-把 `sub.example.com` 换成订阅单独使用的域名。两个域名都解析到同一台 VPS。
+下面的命令在 VPS 上执行，不要在本机执行。把 `lc03test.heiyu.space` 换成节点域名，
+把 `sub.lc03test.heiyu.space` 换成订阅单独使用的域名。两个域名都解析到同一台 VPS。
 
 ### 方式一：直接从 GitHub 运行
 
 ```bash
 sudo -i
 nix profile install github:zerokaze420/nhms-lightos#airport-node-runtime
-NODE_HOST=node.example.com SUBSCRIPTION_HOST=sub.example.com nix run github:zerokaze420/nhms-lightos#airport-node-init
+NODE_HOST=lc03test.heiyu.space SUBSCRIPTION_HOST=sub.lc03test.heiyu.space nix run github:zerokaze420/nhms-lightos#airport-node-init
 ```
 
 之后如果只是想重新输出订阅地址和二维码：
@@ -39,7 +39,7 @@ sudo -i
 git clone https://github.com/zerokaze420/nhms-lightos.git
 cd nhms-lightos
 nix profile install .#airport-node-runtime
-NODE_HOST=node.example.com SUBSCRIPTION_HOST=sub.example.com nix run .#airport-node-init
+NODE_HOST=lc03test.heiyu.space SUBSCRIPTION_HOST=sub.lc03test.heiyu.space nix run .#airport-node-init
 ```
 
 之后如果只是想重新输出订阅地址和二维码：
@@ -56,10 +56,11 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 - `NODE_PORT`：监听端口，默认 `443`。
 - `NODE_NAME`：连接 URL 里的显示名称，默认 `airport-node`。
 - `SUBSCRIPTION_HOST`：订阅单独使用的域名，建议显式设置，例如
-  `sub.example.com`。未设置时默认 `sub.NODE_HOST`。
+  `sub.lc03test.heiyu.space`。未设置时默认 `sub.NODE_HOST`。
+- `SUBSCRIPTION_SCHEME`：订阅地址协议，默认 `https`。
 - `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `80`。订阅地址固定使用
   `SUBSCRIPTION_HOST`，不拼接监听端口。
-- `SUBSCRIPTION_PATH`：订阅路径，默认 `airport-node.txt`。
+- `SUBSCRIPTION_PATH`：订阅路径，默认 `airport-node`。
 - `REALITY_SERVER_NAME`：Reality 握手目标，默认 `www.microsoft.com`。
 - `REALITY_FINGERPRINT`：客户端指纹，默认 `chrome`。
 - `VLESS_FLOW`：默认 `xtls-rprx-vision`。
@@ -72,8 +73,8 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 示例：
 
 ```bash
-NODE_HOST=node.example.com \
-SUBSCRIPTION_HOST=sub.example.com \
+NODE_HOST=lc03test.heiyu.space \
+SUBSCRIPTION_HOST=sub.lc03test.heiyu.space \
 NODE_PORT=443 \
 NODE_NAME=my-vps \
 REALITY_SERVER_NAME=www.microsoft.com \
@@ -90,6 +91,8 @@ ufw allow 80/tcp
 ```
 
 订阅使用 `SUBSCRIPTION_HOST`，需要在 DNS 里把这个域名解析到同一台 VPS。
+默认订阅地址是 `https://sub.lc03test.heiyu.space/airport-node` 这种格式；
+脚本内置的 busybox httpd 只提供 HTTP，HTTPS 需要由前置反代或网关终止 TLS。
 不要把订阅服务也放到 `443`，默认节点已经占用 `443` 提供 VLESS Reality。
 
 ## 注意事项
