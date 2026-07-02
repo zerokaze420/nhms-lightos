@@ -13,6 +13,8 @@ git。
 - `airport-node-info`：读取 `/etc/airport-node/env`，重新输出订阅地址、节点 URL
   和订阅二维码。
 
+这两个命令都会把各订阅格式对应的二维码直接打印到终端。
+
 ## VPS 使用方式
 
 下面的命令在 VPS 上执行，不要在本机执行。把 `lc03test.heiyu.space` 换成节点域名，

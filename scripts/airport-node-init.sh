@@ -390,7 +390,20 @@ ${subscription_index_qr_url}
 Node URL:
 ${url}
 
-Subscription QR:
 EOF
 
-qrencode -t ANSIUTF8 "$subscription_url"
+print_terminal_qr() {
+  label="$1"
+  value="$2"
+
+  echo
+  echo "${label}:"
+  qrencode -t ANSIUTF8 "$value"
+}
+
+print_terminal_qr "Subscription QR" "$subscription_url"
+print_terminal_qr "Base64 QR" "$subscription_base64_url"
+print_terminal_qr "Clash QR" "$subscription_clash_url"
+print_terminal_qr "Mihomo QR" "$subscription_mihomo_url"
+print_terminal_qr "sing-box QR" "$subscription_sing_box_url"
+print_terminal_qr "Index QR" "$subscription_index_url"
