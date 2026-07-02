@@ -74,8 +74,8 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 
 默认会生成这些订阅入口：
 
-- `https://sub.lc03test.heiyu.space/airport-node`：原始 VLESS 链接。
-- `https://sub.lc03test.heiyu.space/airport-node.b64`：base64 通用订阅。
+- `https://sub.lc03test.heiyu.space/airport-node`：base64 通用订阅，推荐优先扫描。
+- `https://sub.lc03test.heiyu.space/airport-node.raw`：原始 VLESS 链接。
 - `https://sub.lc03test.heiyu.space/airport-node.clash.yaml`：Clash 配置。
 - `https://sub.lc03test.heiyu.space/airport-node.mihomo.yaml`：Mihomo 配置。
 - `https://sub.lc03test.heiyu.space/airport-node.sing-box.json`：sing-box outbound JSON。

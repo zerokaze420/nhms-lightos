@@ -73,7 +73,9 @@ fi
 
 SUBSCRIPTION_HOST="${SUBSCRIPTION_HOST:-sub.${NODE_HOST}}"
 SUBSCRIPTION_QR_PATH="${SUBSCRIPTION_PATH}.png"
-SUBSCRIPTION_BASE64_PATH="${SUBSCRIPTION_PATH}.b64"
+SUBSCRIPTION_RAW_PATH="${SUBSCRIPTION_PATH}.raw"
+SUBSCRIPTION_RAW_QR_PATH="${SUBSCRIPTION_RAW_PATH}.png"
+SUBSCRIPTION_BASE64_PATH="${SUBSCRIPTION_PATH}"
 SUBSCRIPTION_CLASH_PATH="${SUBSCRIPTION_PATH}.clash.yaml"
 SUBSCRIPTION_MIHOMO_PATH="${SUBSCRIPTION_PATH}.mihomo.yaml"
 SUBSCRIPTION_SING_BOX_PATH="${SUBSCRIPTION_PATH}.sing-box.json"
@@ -105,6 +107,8 @@ SUBSCRIPTION_SCHEME=${SUBSCRIPTION_SCHEME}
 SUBSCRIPTION_PORT=${SUBSCRIPTION_PORT}
 SUBSCRIPTION_PATH=${SUBSCRIPTION_PATH}
 SUBSCRIPTION_QR_PATH=${SUBSCRIPTION_QR_PATH}
+SUBSCRIPTION_RAW_PATH=${SUBSCRIPTION_RAW_PATH}
+SUBSCRIPTION_RAW_QR_PATH=${SUBSCRIPTION_RAW_QR_PATH}
 SUBSCRIPTION_BASE64_PATH=${SUBSCRIPTION_BASE64_PATH}
 SUBSCRIPTION_CLASH_PATH=${SUBSCRIPTION_CLASH_PATH}
 SUBSCRIPTION_MIHOMO_PATH=${SUBSCRIPTION_MIHOMO_PATH}
@@ -198,6 +202,8 @@ systemctl enable --now airport-node.service
 url="vless://${NODE_UUID}@${NODE_HOST}:${NODE_PORT}?encryption=none&flow=${VLESS_FLOW}&security=reality&sni=${REALITY_SERVER_NAME}&fp=${REALITY_FINGERPRINT}&pbk=${REALITY_PUBLIC_KEY}&sid=${REALITY_SHORT_ID}&type=tcp#${NODE_NAME}"
 subscription_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_PATH}"
 subscription_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_QR_PATH}"
+subscription_raw_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_RAW_PATH}"
+subscription_raw_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_RAW_QR_PATH}"
 subscription_base64_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_BASE64_PATH}"
 subscription_clash_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_CLASH_PATH}"
 subscription_mihomo_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_MIHOMO_PATH}"
@@ -210,10 +216,11 @@ subscription_sing_box_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SU
 subscription_index_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_INDEX_QR_PATH}"
 
 install -d -m 0755 "$SUBSCRIPTION_DIR"
-printf '%s\n' "$url" > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
+printf '%s\n' "$url" > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_RAW_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_RAW_PATH}"
+printf '%s\n' "$url" | base64 -w 0 > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
+printf '\n' >> "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
-printf '%s\n' "$url" | base64 -w 0 > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_PATH}"
-printf '\n' >> "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_PATH}"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_PATH}"
 
 yaml_node_name="$(jq -Rn --arg value "$NODE_NAME" '$value')"
@@ -286,8 +293,13 @@ jq -n \
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_SING_BOX_PATH}"
 
 cat > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_PATH}" <<EOF
-Raw VLESS:
+Main base64:
 ${subscription_url}
+${subscription_qr_url}
+
+Raw VLESS:
+${subscription_raw_url}
+${subscription_raw_qr_url}
 
 Base64:
 ${subscription_base64_url}
@@ -315,12 +327,14 @@ EOF
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_PATH}"
 
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_QR_PATH}" "$subscription_url"
+qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_RAW_QR_PATH}" "$subscription_raw_url"
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_QR_PATH}" "$subscription_base64_url"
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_QR_PATH}" "$subscription_clash_url"
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_MIHOMO_QR_PATH}" "$subscription_mihomo_url"
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_SING_BOX_QR_PATH}" "$subscription_sing_box_url"
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_QR_PATH}" "$subscription_index_url"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_QR_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_RAW_QR_PATH}"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_QR_PATH}"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_QR_PATH}"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_MIHOMO_QR_PATH}"
@@ -362,10 +376,15 @@ ${subscription_url}
 Subscription QR URL:
 ${subscription_qr_url}
 
+Raw VLESS:
+${subscription_raw_url}
+Raw QR:
+${subscription_raw_qr_url}
+
 Base64 Subscription:
-${subscription_base64_url}
+${subscription_url}
 Base64 QR:
-${subscription_base64_qr_url}
+${subscription_qr_url}
 
 Clash Subscription:
 ${subscription_clash_url}
@@ -402,7 +421,8 @@ print_terminal_qr() {
 }
 
 print_terminal_qr "Subscription QR" "$subscription_url"
-print_terminal_qr "Base64 QR" "$subscription_base64_url"
+print_terminal_qr "Raw VLESS QR" "$subscription_raw_url"
+print_terminal_qr "Base64 QR" "$subscription_url"
 print_terminal_qr "Clash QR" "$subscription_clash_url"
 print_terminal_qr "Mihomo QR" "$subscription_mihomo_url"
 print_terminal_qr "sing-box QR" "$subscription_sing_box_url"
