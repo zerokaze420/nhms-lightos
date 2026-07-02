@@ -69,6 +69,11 @@ if [ -n "$INPUT_VLESS_FLOW_SET" ]; then VLESS_FLOW="$INPUT_VLESS_FLOW"; fi
 
 SUBSCRIPTION_HOST="${SUBSCRIPTION_HOST:-sub.${NODE_HOST}}"
 SUBSCRIPTION_QR_PATH="${SUBSCRIPTION_PATH}.png"
+SUBSCRIPTION_BASE64_PATH="${SUBSCRIPTION_PATH}.b64"
+SUBSCRIPTION_CLASH_PATH="${SUBSCRIPTION_PATH}.clash.yaml"
+SUBSCRIPTION_MIHOMO_PATH="${SUBSCRIPTION_PATH}.mihomo.yaml"
+SUBSCRIPTION_SING_BOX_PATH="${SUBSCRIPTION_PATH}.sing-box.json"
+SUBSCRIPTION_INDEX_PATH="${SUBSCRIPTION_PATH}.index.txt"
 
 NODE_UUID="${NODE_UUID:-$(sing-box generate uuid)}"
 REALITY_KEYS="$(sing-box generate reality-keypair)"
@@ -91,6 +96,11 @@ SUBSCRIPTION_SCHEME=${SUBSCRIPTION_SCHEME}
 SUBSCRIPTION_PORT=${SUBSCRIPTION_PORT}
 SUBSCRIPTION_PATH=${SUBSCRIPTION_PATH}
 SUBSCRIPTION_QR_PATH=${SUBSCRIPTION_QR_PATH}
+SUBSCRIPTION_BASE64_PATH=${SUBSCRIPTION_BASE64_PATH}
+SUBSCRIPTION_CLASH_PATH=${SUBSCRIPTION_CLASH_PATH}
+SUBSCRIPTION_MIHOMO_PATH=${SUBSCRIPTION_MIHOMO_PATH}
+SUBSCRIPTION_SING_BOX_PATH=${SUBSCRIPTION_SING_BOX_PATH}
+SUBSCRIPTION_INDEX_PATH=${SUBSCRIPTION_INDEX_PATH}
 NODE_UUID=${NODE_UUID}
 VLESS_FLOW=${VLESS_FLOW}
 REALITY_SERVER_NAME=${REALITY_SERVER_NAME}
@@ -174,10 +184,109 @@ systemctl enable --now airport-node.service
 url="vless://${NODE_UUID}@${NODE_HOST}:${NODE_PORT}?encryption=none&flow=${VLESS_FLOW}&security=reality&sni=${REALITY_SERVER_NAME}&fp=${REALITY_FINGERPRINT}&pbk=${REALITY_PUBLIC_KEY}&sid=${REALITY_SHORT_ID}&type=tcp#${NODE_NAME}"
 subscription_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_PATH}"
 subscription_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_QR_PATH}"
+subscription_base64_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_BASE64_PATH}"
+subscription_clash_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_CLASH_PATH}"
+subscription_mihomo_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_MIHOMO_PATH}"
+subscription_sing_box_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_SING_BOX_PATH}"
+subscription_index_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_INDEX_PATH}"
 
 install -d -m 0755 "$SUBSCRIPTION_DIR"
 printf '%s\n' "$url" > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
+printf '%s\n' "$url" | base64 -w 0 > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_PATH}"
+printf '\n' >> "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_PATH}"
+
+yaml_node_name="$(jq -Rn --arg value "$NODE_NAME" '$value')"
+cat > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_PATH}" <<EOF
+proxies:
+  - name: ${yaml_node_name}
+    type: vless
+    server: ${NODE_HOST}
+    port: ${NODE_PORT}
+    uuid: ${NODE_UUID}
+    network: tcp
+    tls: true
+    udp: true
+    flow: ${VLESS_FLOW}
+    servername: ${REALITY_SERVER_NAME}
+    client-fingerprint: ${REALITY_FINGERPRINT}
+    reality-opts:
+      public-key: ${REALITY_PUBLIC_KEY}
+      short-id: ${REALITY_SHORT_ID}
+
+proxy-groups:
+  - name: Proxy
+    type: select
+    proxies:
+      - ${yaml_node_name}
+
+rules:
+  - MATCH,Proxy
+EOF
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_PATH}"
+cp "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_PATH}" "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_MIHOMO_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_MIHOMO_PATH}"
+
+jq -n \
+  --arg tag "$NODE_NAME" \
+  --arg server "$NODE_HOST" \
+  --arg server_port "$NODE_PORT" \
+  --arg uuid "$NODE_UUID" \
+  --arg flow "$VLESS_FLOW" \
+  --arg server_name "$REALITY_SERVER_NAME" \
+  --arg fingerprint "$REALITY_FINGERPRINT" \
+  --arg public_key "$REALITY_PUBLIC_KEY" \
+  --arg short_id "$REALITY_SHORT_ID" \
+  '{
+    outbounds: [
+      {
+        type: "vless",
+        tag: $tag,
+        server: $server,
+        server_port: ($server_port | tonumber),
+        uuid: $uuid,
+        flow: $flow,
+        network: "tcp",
+        tls: {
+          enabled: true,
+          server_name: $server_name,
+          utls: {
+            enabled: true,
+            fingerprint: $fingerprint
+          },
+          reality: {
+            enabled: true,
+            public_key: $public_key,
+            short_id: $short_id
+          }
+        }
+      }
+    ]
+  }' > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_SING_BOX_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_SING_BOX_PATH}"
+
+cat > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_PATH}" <<EOF
+Raw VLESS:
+${subscription_url}
+
+Base64:
+${subscription_base64_url}
+
+Clash:
+${subscription_clash_url}
+
+Mihomo:
+${subscription_mihomo_url}
+
+sing-box outbound:
+${subscription_sing_box_url}
+
+QR:
+${subscription_qr_url}
+EOF
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_PATH}"
+
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_QR_PATH}" "$subscription_url"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_QR_PATH}"
 
@@ -215,6 +324,21 @@ ${subscription_url}
 
 Subscription QR URL:
 ${subscription_qr_url}
+
+Base64 Subscription:
+${subscription_base64_url}
+
+Clash Subscription:
+${subscription_clash_url}
+
+Mihomo Subscription:
+${subscription_mihomo_url}
+
+sing-box outbound:
+${subscription_sing_box_url}
+
+Subscription Index:
+${subscription_index_url}
 
 Node URL:
 ${url}

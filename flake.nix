@@ -23,6 +23,8 @@
             name = "airport-node-runtime";
             paths = [
               pkgs.busybox
+              pkgs.coreutils
+              pkgs.jq
               pkgs.sing-box
               pkgs.qrencode
             ];

@@ -9,7 +9,7 @@ git。
 ## 可用命令
 
 - `airport-node-init`：生成密钥，写入 sing-box 配置，安装 systemd 服务，启动
-  节点和订阅服务，并输出订阅地址、节点 URL 和订阅二维码。
+  节点和订阅服务，并输出多格式订阅地址、节点 URL 和订阅二维码。
 - `airport-node-info`：读取 `/etc/airport-node/env`，重新输出订阅地址、节点 URL
   和订阅二维码。
 
@@ -69,6 +69,18 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
   `/etc/airport-node/server.json`。
 - `AIRPORT_NODE_SERVICE`：systemd unit 路径，默认
   `/etc/systemd/system/airport-node.service`。
+
+默认会生成这些订阅入口：
+
+- `https://sub.lc03test.heiyu.space/airport-node`：原始 VLESS 链接。
+- `https://sub.lc03test.heiyu.space/airport-node.b64`：base64 通用订阅。
+- `https://sub.lc03test.heiyu.space/airport-node.clash.yaml`：Clash 配置。
+- `https://sub.lc03test.heiyu.space/airport-node.mihomo.yaml`：Mihomo 配置。
+- `https://sub.lc03test.heiyu.space/airport-node.sing-box.json`：sing-box outbound JSON。
+- `https://sub.lc03test.heiyu.space/airport-node.index.txt`：所有订阅入口汇总。
+- `https://sub.lc03test.heiyu.space/airport-node.png`：订阅二维码图片。
+
+Reality VLESS 需要客户端内核支持，Clash 格式主要面向 Mihomo/Clash.Meta 类客户端。
 
 示例：
 
