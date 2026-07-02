@@ -22,6 +22,7 @@
           airport-node-runtime = pkgs.symlinkJoin {
             name = "airport-node-runtime";
             paths = [
+              pkgs.busybox
               pkgs.sing-box
               pkgs.qrencode
             ];
@@ -30,6 +31,7 @@
           airport-node-init = pkgs.writeShellApplication {
             name = "airport-node-init";
             runtimeInputs = [
+              pkgs.busybox
               pkgs.coreutils
               pkgs.gawk
               pkgs.gnugrep

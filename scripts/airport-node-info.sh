@@ -20,10 +20,13 @@ for name in $required_vars; do
 done
 
 NODE_NAME="${NODE_NAME:-airport-node}"
+SUBSCRIPTION_PORT="${SUBSCRIPTION_PORT:-8080}"
+SUBSCRIPTION_PATH="${SUBSCRIPTION_PATH:-airport-node.txt}"
 REALITY_FINGERPRINT="${REALITY_FINGERPRINT:-chrome}"
 VLESS_FLOW="${VLESS_FLOW:-xtls-rprx-vision}"
 
 url="vless://${NODE_UUID}@${NODE_HOST}:${NODE_PORT}?encryption=none&flow=${VLESS_FLOW}&security=reality&sni=${REALITY_SERVER_NAME}&fp=${REALITY_FINGERPRINT}&pbk=${REALITY_PUBLIC_KEY}&sid=${REALITY_SHORT_ID}&type=tcp#${NODE_NAME}"
+subscription_url="http://${NODE_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_PATH}"
 
 cat <<EOF
 Node: ${NODE_NAME}
@@ -31,10 +34,13 @@ Host: ${NODE_HOST}
 Port: ${NODE_PORT}
 Protocol: VLESS Reality over TCP
 
-URL:
+Subscription:
+${subscription_url}
+
+Node URL:
 ${url}
 
-QR:
+Subscription QR:
 EOF
 
-qrencode -t ANSIUTF8 "$url"
+qrencode -t ANSIUTF8 "$subscription_url"
