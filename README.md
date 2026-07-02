@@ -55,7 +55,8 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 - `NODE_HOST`：必填，客户端连接用的域名或公网 IP。
 - `NODE_PORT`：监听端口，默认 `443`。
 - `NODE_NAME`：连接 URL 里的显示名称，默认 `airport-node`。
-- `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `8080`。
+- `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `80`，订阅地址默认使用
+  `http://NODE_HOST/SUBSCRIPTION_PATH`，不额外显示端口。
 - `SUBSCRIPTION_PATH`：订阅路径，默认 `airport-node.txt`。
 - `REALITY_SERVER_NAME`：Reality 握手目标，默认 `www.microsoft.com`。
 - `REALITY_FINGERPRINT`：客户端指纹，默认 `chrome`。
@@ -82,7 +83,7 @@ nix run .#airport-node-init
 
 ```bash
 ufw allow 443/tcp
-ufw allow 8080/tcp
+ufw allow 80/tcp
 ```
 
 ## 注意事项

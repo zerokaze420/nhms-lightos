@@ -31,7 +31,7 @@ INPUT_VLESS_FLOW="${VLESS_FLOW:-}"
 NODE_HOST="${NODE_HOST:-}"
 NODE_PORT="${NODE_PORT:-443}"
 NODE_NAME="${NODE_NAME:-airport-node}"
-SUBSCRIPTION_PORT="${SUBSCRIPTION_PORT:-8080}"
+SUBSCRIPTION_PORT="${SUBSCRIPTION_PORT:-80}"
 SUBSCRIPTION_PATH="${SUBSCRIPTION_PATH:-airport-node.txt}"
 REALITY_SERVER_NAME="${REALITY_SERVER_NAME:-www.microsoft.com}"
 REALITY_FINGERPRINT="${REALITY_FINGERPRINT:-chrome}"
@@ -158,7 +158,11 @@ systemctl daemon-reload
 systemctl enable --now airport-node.service
 
 url="vless://${NODE_UUID}@${NODE_HOST}:${NODE_PORT}?encryption=none&flow=${VLESS_FLOW}&security=reality&sni=${REALITY_SERVER_NAME}&fp=${REALITY_FINGERPRINT}&pbk=${REALITY_PUBLIC_KEY}&sid=${REALITY_SHORT_ID}&type=tcp#${NODE_NAME}"
-subscription_url="http://${NODE_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_PATH}"
+if [ "$SUBSCRIPTION_PORT" = "80" ]; then
+  subscription_url="http://${NODE_HOST}/${SUBSCRIPTION_PATH}"
+else
+  subscription_url="http://${NODE_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_PATH}"
+fi
 
 install -d -m 0755 "$SUBSCRIPTION_DIR"
 printf '%s\n' "$url" > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"

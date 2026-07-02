@@ -20,13 +20,17 @@ for name in $required_vars; do
 done
 
 NODE_NAME="${NODE_NAME:-airport-node}"
-SUBSCRIPTION_PORT="${SUBSCRIPTION_PORT:-8080}"
+SUBSCRIPTION_PORT="${SUBSCRIPTION_PORT:-80}"
 SUBSCRIPTION_PATH="${SUBSCRIPTION_PATH:-airport-node.txt}"
 REALITY_FINGERPRINT="${REALITY_FINGERPRINT:-chrome}"
 VLESS_FLOW="${VLESS_FLOW:-xtls-rprx-vision}"
 
 url="vless://${NODE_UUID}@${NODE_HOST}:${NODE_PORT}?encryption=none&flow=${VLESS_FLOW}&security=reality&sni=${REALITY_SERVER_NAME}&fp=${REALITY_FINGERPRINT}&pbk=${REALITY_PUBLIC_KEY}&sid=${REALITY_SHORT_ID}&type=tcp#${NODE_NAME}"
-subscription_url="http://${NODE_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_PATH}"
+if [ "$SUBSCRIPTION_PORT" = "80" ]; then
+  subscription_url="http://${NODE_HOST}/${SUBSCRIPTION_PATH}"
+else
+  subscription_url="http://${NODE_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_PATH}"
+fi
 
 cat <<EOF
 Node: ${NODE_NAME}
