@@ -15,15 +15,15 @@ git。
 
 ## VPS 使用方式
 
-下面的命令在 VPS 上执行，不要在本机执行。把 `node.example.com` 换成 VPS 的
-域名或公网 IP。
+下面的命令在 VPS 上执行，不要在本机执行。把 `node.example.com` 换成节点域名，
+把 `sub.example.com` 换成订阅单独使用的域名。两个域名都解析到同一台 VPS。
 
 ### 方式一：直接从 GitHub 运行
 
 ```bash
 sudo -i
 nix profile install github:zerokaze420/nhms-lightos#airport-node-runtime
-NODE_HOST=node.example.com nix run github:zerokaze420/nhms-lightos#airport-node-init
+NODE_HOST=node.example.com SUBSCRIPTION_HOST=sub.example.com nix run github:zerokaze420/nhms-lightos#airport-node-init
 ```
 
 之后如果只是想重新输出订阅地址和二维码：
@@ -39,7 +39,7 @@ sudo -i
 git clone https://github.com/zerokaze420/nhms-lightos.git
 cd nhms-lightos
 nix profile install .#airport-node-runtime
-NODE_HOST=node.example.com nix run .#airport-node-init
+NODE_HOST=node.example.com SUBSCRIPTION_HOST=sub.example.com nix run .#airport-node-init
 ```
 
 之后如果只是想重新输出订阅地址和二维码：
@@ -52,11 +52,13 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 
 `airport-node-init` 支持通过环境变量配置：
 
-- `NODE_HOST`：必填，客户端连接用的域名或公网 IP。
+- `NODE_HOST`：必填，客户端连接节点用的域名或公网 IP。
 - `NODE_PORT`：监听端口，默认 `443`。
 - `NODE_NAME`：连接 URL 里的显示名称，默认 `airport-node`。
-- `SUBSCRIPTION_HOST`：订阅使用的域名，默认 `sub.NODE_HOST`。
-- `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `80`，默认订阅地址不额外显示端口。
+- `SUBSCRIPTION_HOST`：订阅单独使用的域名，建议显式设置，例如
+  `sub.example.com`。未设置时默认 `sub.NODE_HOST`。
+- `SUBSCRIPTION_PORT`：订阅服务监听端口，默认 `80`。订阅地址固定使用
+  `SUBSCRIPTION_HOST`，不拼接监听端口。
 - `SUBSCRIPTION_PATH`：订阅路径，默认 `airport-node.txt`。
 - `REALITY_SERVER_NAME`：Reality 握手目标，默认 `www.microsoft.com`。
 - `REALITY_FINGERPRINT`：客户端指纹，默认 `chrome`。
@@ -71,6 +73,7 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 
 ```bash
 NODE_HOST=node.example.com \
+SUBSCRIPTION_HOST=sub.example.com \
 NODE_PORT=443 \
 NODE_NAME=my-vps \
 REALITY_SERVER_NAME=www.microsoft.com \
@@ -86,7 +89,8 @@ ufw allow 443/tcp
 ufw allow 80/tcp
 ```
 
-订阅默认使用 `sub.NODE_HOST`，需要在 DNS 里把这个子域名解析到同一台 VPS。
+订阅使用 `SUBSCRIPTION_HOST`，需要在 DNS 里把这个域名解析到同一台 VPS。
+不要把订阅服务也放到 `443`，默认节点已经占用 `443` 提供 VLESS Reality。
 
 ## 注意事项
 

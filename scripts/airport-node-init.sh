@@ -167,13 +167,8 @@ systemctl daemon-reload
 systemctl enable --now airport-node.service
 
 url="vless://${NODE_UUID}@${NODE_HOST}:${NODE_PORT}?encryption=none&flow=${VLESS_FLOW}&security=reality&sni=${REALITY_SERVER_NAME}&fp=${REALITY_FINGERPRINT}&pbk=${REALITY_PUBLIC_KEY}&sid=${REALITY_SHORT_ID}&type=tcp#${NODE_NAME}"
-if [ "$SUBSCRIPTION_PORT" = "80" ]; then
-  subscription_url="http://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_PATH}"
-  subscription_qr_url="http://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_QR_PATH}"
-else
-  subscription_url="http://${SUBSCRIPTION_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_PATH}"
-  subscription_qr_url="http://${SUBSCRIPTION_HOST}:${SUBSCRIPTION_PORT}/${SUBSCRIPTION_QR_PATH}"
-fi
+subscription_url="http://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_PATH}"
+subscription_qr_url="http://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_QR_PATH}"
 
 install -d -m 0755 "$SUBSCRIPTION_DIR"
 printf '%s\n' "$url" > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
