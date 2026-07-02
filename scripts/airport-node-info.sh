@@ -33,6 +33,11 @@ SUBSCRIPTION_CLASH_PATH="${SUBSCRIPTION_CLASH_PATH:-${SUBSCRIPTION_PATH}.clash.y
 SUBSCRIPTION_MIHOMO_PATH="${SUBSCRIPTION_MIHOMO_PATH:-${SUBSCRIPTION_PATH}.mihomo.yaml}"
 SUBSCRIPTION_SING_BOX_PATH="${SUBSCRIPTION_SING_BOX_PATH:-${SUBSCRIPTION_PATH}.sing-box.json}"
 SUBSCRIPTION_INDEX_PATH="${SUBSCRIPTION_INDEX_PATH:-${SUBSCRIPTION_PATH}.index.txt}"
+SUBSCRIPTION_BASE64_QR_PATH="${SUBSCRIPTION_BASE64_QR_PATH:-${SUBSCRIPTION_BASE64_PATH}.png}"
+SUBSCRIPTION_CLASH_QR_PATH="${SUBSCRIPTION_CLASH_QR_PATH:-${SUBSCRIPTION_CLASH_PATH}.png}"
+SUBSCRIPTION_MIHOMO_QR_PATH="${SUBSCRIPTION_MIHOMO_QR_PATH:-${SUBSCRIPTION_MIHOMO_PATH}.png}"
+SUBSCRIPTION_SING_BOX_QR_PATH="${SUBSCRIPTION_SING_BOX_QR_PATH:-${SUBSCRIPTION_SING_BOX_PATH}.png}"
+SUBSCRIPTION_INDEX_QR_PATH="${SUBSCRIPTION_INDEX_QR_PATH:-${SUBSCRIPTION_INDEX_PATH}.png}"
 REALITY_FINGERPRINT="${REALITY_FINGERPRINT:-chrome}"
 VLESS_FLOW="${VLESS_FLOW:-xtls-rprx-vision}"
 
@@ -44,6 +49,11 @@ subscription_clash_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIP
 subscription_mihomo_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_MIHOMO_PATH}"
 subscription_sing_box_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_SING_BOX_PATH}"
 subscription_index_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_INDEX_PATH}"
+subscription_base64_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_BASE64_QR_PATH}"
+subscription_clash_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_CLASH_QR_PATH}"
+subscription_mihomo_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_MIHOMO_QR_PATH}"
+subscription_sing_box_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_SING_BOX_QR_PATH}"
+subscription_index_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_INDEX_QR_PATH}"
 
 cat <<EOF
 Node: ${NODE_NAME}
@@ -59,18 +69,28 @@ ${subscription_qr_url}
 
 Base64 Subscription:
 ${subscription_base64_url}
+Base64 QR:
+${subscription_base64_qr_url}
 
 Clash Subscription:
 ${subscription_clash_url}
+Clash QR:
+${subscription_clash_qr_url}
 
 Mihomo Subscription:
 ${subscription_mihomo_url}
+Mihomo QR:
+${subscription_mihomo_qr_url}
 
 sing-box outbound:
 ${subscription_sing_box_url}
+sing-box QR:
+${subscription_sing_box_qr_url}
 
 Subscription Index:
 ${subscription_index_url}
+Index QR:
+${subscription_index_qr_url}
 
 Node URL:
 ${url}

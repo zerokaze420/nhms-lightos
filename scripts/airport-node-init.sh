@@ -78,6 +78,11 @@ SUBSCRIPTION_CLASH_PATH="${SUBSCRIPTION_PATH}.clash.yaml"
 SUBSCRIPTION_MIHOMO_PATH="${SUBSCRIPTION_PATH}.mihomo.yaml"
 SUBSCRIPTION_SING_BOX_PATH="${SUBSCRIPTION_PATH}.sing-box.json"
 SUBSCRIPTION_INDEX_PATH="${SUBSCRIPTION_PATH}.index.txt"
+SUBSCRIPTION_BASE64_QR_PATH="${SUBSCRIPTION_BASE64_PATH}.png"
+SUBSCRIPTION_CLASH_QR_PATH="${SUBSCRIPTION_CLASH_PATH}.png"
+SUBSCRIPTION_MIHOMO_QR_PATH="${SUBSCRIPTION_MIHOMO_PATH}.png"
+SUBSCRIPTION_SING_BOX_QR_PATH="${SUBSCRIPTION_SING_BOX_PATH}.png"
+SUBSCRIPTION_INDEX_QR_PATH="${SUBSCRIPTION_INDEX_PATH}.png"
 
 NODE_UUID="${NODE_UUID:-$(sing-box generate uuid)}"
 REALITY_KEYS="$(sing-box generate reality-keypair)"
@@ -105,6 +110,11 @@ SUBSCRIPTION_CLASH_PATH=${SUBSCRIPTION_CLASH_PATH}
 SUBSCRIPTION_MIHOMO_PATH=${SUBSCRIPTION_MIHOMO_PATH}
 SUBSCRIPTION_SING_BOX_PATH=${SUBSCRIPTION_SING_BOX_PATH}
 SUBSCRIPTION_INDEX_PATH=${SUBSCRIPTION_INDEX_PATH}
+SUBSCRIPTION_BASE64_QR_PATH=${SUBSCRIPTION_BASE64_QR_PATH}
+SUBSCRIPTION_CLASH_QR_PATH=${SUBSCRIPTION_CLASH_QR_PATH}
+SUBSCRIPTION_MIHOMO_QR_PATH=${SUBSCRIPTION_MIHOMO_QR_PATH}
+SUBSCRIPTION_SING_BOX_QR_PATH=${SUBSCRIPTION_SING_BOX_QR_PATH}
+SUBSCRIPTION_INDEX_QR_PATH=${SUBSCRIPTION_INDEX_QR_PATH}
 NODE_UUID=${NODE_UUID}
 VLESS_FLOW=${VLESS_FLOW}
 REALITY_SERVER_NAME=${REALITY_SERVER_NAME}
@@ -193,6 +203,11 @@ subscription_clash_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIP
 subscription_mihomo_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_MIHOMO_PATH}"
 subscription_sing_box_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_SING_BOX_PATH}"
 subscription_index_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_INDEX_PATH}"
+subscription_base64_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_BASE64_QR_PATH}"
+subscription_clash_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_CLASH_QR_PATH}"
+subscription_mihomo_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_MIHOMO_QR_PATH}"
+subscription_sing_box_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_SING_BOX_QR_PATH}"
+subscription_index_qr_url="${SUBSCRIPTION_SCHEME}://${SUBSCRIPTION_HOST}/${SUBSCRIPTION_INDEX_QR_PATH}"
 
 install -d -m 0755 "$SUBSCRIPTION_DIR"
 printf '%s\n' "$url" > "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_PATH}"
@@ -276,15 +291,23 @@ ${subscription_url}
 
 Base64:
 ${subscription_base64_url}
+${subscription_base64_qr_url}
 
 Clash:
 ${subscription_clash_url}
+${subscription_clash_qr_url}
 
 Mihomo:
 ${subscription_mihomo_url}
+${subscription_mihomo_qr_url}
 
 sing-box outbound:
 ${subscription_sing_box_url}
+${subscription_sing_box_qr_url}
+
+Index:
+${subscription_index_url}
+${subscription_index_qr_url}
 
 QR:
 ${subscription_qr_url}
@@ -292,7 +315,17 @@ EOF
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_PATH}"
 
 qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_QR_PATH}" "$subscription_url"
+qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_QR_PATH}" "$subscription_base64_url"
+qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_QR_PATH}" "$subscription_clash_url"
+qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_MIHOMO_QR_PATH}" "$subscription_mihomo_url"
+qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_SING_BOX_QR_PATH}" "$subscription_sing_box_url"
+qrencode -o "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_QR_PATH}" "$subscription_index_url"
 chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_QR_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_BASE64_QR_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_CLASH_QR_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_MIHOMO_QR_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_SING_BOX_QR_PATH}"
+chmod 0644 "${SUBSCRIPTION_DIR}/${SUBSCRIPTION_INDEX_QR_PATH}"
 
 BUSYBOX_BIN="$(command -v busybox)"
 cat > "$SUBSCRIPTION_SERVICE_FILE" <<EOF
@@ -331,18 +364,28 @@ ${subscription_qr_url}
 
 Base64 Subscription:
 ${subscription_base64_url}
+Base64 QR:
+${subscription_base64_qr_url}
 
 Clash Subscription:
 ${subscription_clash_url}
+Clash QR:
+${subscription_clash_qr_url}
 
 Mihomo Subscription:
 ${subscription_mihomo_url}
+Mihomo QR:
+${subscription_mihomo_qr_url}
 
 sing-box outbound:
 ${subscription_sing_box_url}
+sing-box QR:
+${subscription_sing_box_qr_url}
 
 Subscription Index:
 ${subscription_index_url}
+Index QR:
+${subscription_index_qr_url}
 
 Node URL:
 ${url}

@@ -79,6 +79,8 @@ sudo AIRPORT_NODE_ENV=/etc/airport-node/env nix run .#airport-node-info
 - `https://sub.lc03test.heiyu.space/airport-node.sing-box.json`：sing-box outbound JSON。
 - `https://sub.lc03test.heiyu.space/airport-node.index.txt`：所有订阅入口汇总。
 - `https://sub.lc03test.heiyu.space/airport-node.png`：订阅二维码图片。
+- 其他格式也会生成对应二维码，例如
+  `https://sub.lc03test.heiyu.space/airport-node.clash.yaml.png`。
 
 Reality VLESS 需要客户端内核支持，Clash 格式主要面向 Mihomo/Clash.Meta 类客户端。
 旧配置里的默认路径 `airport-node.txt` 会自动迁移为 `airport-node`；如果显式设置
